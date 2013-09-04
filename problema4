@@ -37,13 +37,30 @@ asegura todos([actoresOrdenados(actores(peli)) | peli <-- res]) //invariante4
 		requiere: p ∈ peliculas (c);
 		modifica: c;
 		asegura pelicula (result) == p ;
-		asegura usado (result) == false ;
-		asegura sala(result) ∈ salas (pre(c)) ;
+		asegura not(usado (result)) ; // version anterior "usado(result) == False"
+		asegura sala(result) ∈ salas (pre(c))  ; // sala(result) ∈ salas(c) no tenes que asegurar esto tambien?
 		asegura not (∃ pe <- peliculas(pre (c))) sala(pre(c), pe) == sala(result) ;
 		asegura mismos (ticketsVendidosSinUsar( pre(c)) ++ [result], ticketsVendidosSinUsar(c)) ;
 		asegura nombre (c) == nombre (pre(c)) ;
 		asegura mismos (peliculas (pre (c)), peliculas (c)) ;
 		asegura mismos (salas (pre (c)), salas (c)) ;
 		asegura todos ([sala (pre (c), pe) == sala (c, pe) | pe <- peliculas (pre (c)) ]) ;
-		asegura todos ([espectadores (pre(c), sa) == espectadores (c, sa) | sa <- salas (pre (c)) ]) ;0
-} 
+		asegura todos ([espectadores (pre(c), sa) == espectadores (c, sa) | sa <- salas (pre (c)) ]) ;
+		} 
+
+17. problema ingresarASalas (c: Cine, s: Sala, t: Ticket) {
+		requiere: s ∈ salas (c) ;
+		requiere: sala (t) == s ;
+		requiere: t ∈ ticketsVendidosSinUsar (c) ;
+		modifica: c,t ;
+		asegura peliculaDelTicketNoCambia : pelicula (pre (t)) == pelicula (t) ;
+		asegura salaDelTicketNoCambia : sala (pre (t)) == sala (t) ;
+		asegura marcarElTicketComoUsado : usado (t) == True ;
+		asegura sumarTicketAEspectadores : espectadores (c, s) == espectadores (pre(c), s) + 1 ;
+		asegura sacoElTicketDeSinUsar : mismos (ticketsVendidosSinUsar (c), [ti | ti <- ticketsVendidosSinUsar (pre(c)), ti != t]) ;
+		asegura nombreDelCineNoCambia : nombre (c) == nombre (pre (c)) ;
+		asegura peliculasDelCineNoCambia : peliculas (c) == peliculas (pre (c)) ;
+		asegura salasNoCambian : salas (c) == salas (pre (c)) ;
+		asegura pelisViejasNoCambianSala : todos( [sala (c, p) == sala (pre(c), p) | p <- peliculas (pre (c) ] ) ;
+		asegura espectadoresNoCambian : todos( [espectadores (c, sa) == espectadores (pre(c), sa) | sa <- salas (pre (c)), sa != s]) ;
+}
