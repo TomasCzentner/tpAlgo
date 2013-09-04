@@ -1,15 +1,20 @@
+1.invariante generosOrdenados: tiposOrdenados(generos(p))
+	aux tiposOrdenados(x : [T]) : Bool = todos([ord(xi) < ord(xi + 1) | i <-- [0..|x|), i != |x|-1)])
+2.invariante actoresOrdenados(actores(p))
+	aux actoresOrdenados(as : [Actores]) : Bool = todos([asi-1 <= asi] | i <-- [1..|as|)])
+3. problema agruparPelisPorGenero (ps:[Pelicula]) = res : [(Genero, [Pelicula])] {
+	
+}
 4. problema generarSagaDePeliculas(as:[Actor], gs:[Genero], nombres:[String]) = res : [Pelicula]
   ∈ ∉
 //Que genera una pelıcula por cada nombre en nombres con los mismos actores y generos para todas. No hay nombres repetidos.
 //Vamos con la ida. Como queremos el resultado?
 //Si nos damos cuenta, este es el caso opuesto al ejercicio anterior donde sacabamos la informacion de pelicula, ahora tenemos que armar una/s pelicula/s en base a informacion que nos dan (as, gs, nombres).
 
-requiere |as| > 0;
-requiere |gs| > 0;
-requiere |nombres| > 0;
+requiere |nombres| > 0; //preguntar
 
-asegura todos([mismos(generos(peli), gs)| peli <-- res]);
-asegura todos([mismos(actores(peli), as) | peli <-- res]); //todos los actores? y si paso algo en la saga? MMHH
+asegura todos([generos(peli) ∈ gs) | peli <-- res]);   
+asegura todos([actores(peli) ∈ as) | peli <-- res]); 
 asegura todos([nombre(peli) ∈ nombres | peli <-- res]);
 asegura sinRepetidos(res);
 //Hasta aca seria "no hay cosas de mas"
@@ -17,5 +22,28 @@ asegura sinRepetidos(res);
 asegura todos([nombrePeli ∈ listaNombrePelis(res) | nombrePeli <-- nombres]);
 aux listaNombrePelis(listaPelis : [Pelicula]) : [String] = 
 	[nombre(peli) | peli < -- listaPelis]
+asegura todos([sinRepetidos(actores(peli)) | peli <-- res]) //invariante1
+asegura todos([sinRepetidos(generos(peli)) | peli <-- res]) //invariante2
+asegura todos([generosOrdenados(generos(peli)) | peli <-- res]) //invariante3
+asegura todos([actoresOrdenados(actores(peli)) | peli <-- res]) //invariante4
 
-5. 
+//mismos(generos(peli),gs) ??? (lista repetida de actores o genero?)
+//Si no das generos, ni actores, se puede seguir creando una saga a partir del nombre simplemente?
+
+5.
+
+
+16. problema venderTicket (c: Cine, p: Pelicula) = result : Ticket {
+		requiere: p ∈ peliculas (c);
+		modifica: c;
+		asegura pelicula (result) == p ;
+		asegura usado (result) == false ;
+		asegura sala(result) ∈ salas (pre(c)) ;
+		asegura not (∃ pe <- peliculas(pre (c))) sala(pre(c), pe) == sala(result) ;
+		asegura mismos (ticketsVendidosSinUsar( pre(c)) ++ [result], ticketsVendidosSinUsar(c)) ;
+		asegura nombre (c) == nombre (pre(c)) ;
+		asegura mismos (peliculas (pre (c)), peliculas (c)) ;
+		asegura mismos (salas (pre (c)), salas (c)) ;
+		asegura todos ([sala (pre (c), pe) == sala (c, pe) | pe <- peliculas (pre (c)) ]) ;
+		asegura todos ([espectadores (pre(c), sa) == espectadores (c, sa) | sa <- salas (pre (c)) ]) ;0
+} 
