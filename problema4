@@ -1,0 +1,21 @@
+4. problema generarSagaDePeliculas(as:[Actor], gs:[Genero], nombres:[String]) = res : [Pelicula]
+  ∈ ∉
+//Que genera una pelıcula por cada nombre en nombres con los mismos actores y generos para todas. No hay nombres repetidos.
+//Vamos con la ida. Como queremos el resultado?
+//Si nos damos cuenta, este es el caso opuesto al ejercicio anterior donde sacabamos la informacion de pelicula, ahora tenemos que armar una/s pelicula/s en base a informacion que nos dan (as, gs, nombres).
+
+requiere |as| > 0;
+requiere |gs| > 0;
+requiere |nombres| > 0;
+
+asegura todos([mismos(generos(peli), gs)| peli <-- res]);
+asegura todos([mismos(actores(peli), as) | peli <-- res]); //todos los actores? y si paso algo en la saga? MMHH
+asegura todos([nombre(peli) ∈ nombres | peli <-- res]);
+asegura sinRepetidos(res);
+//Hasta aca seria "no hay cosas de mas"
+//Hay "cosas de menos?"
+asegura todos([nombrePeli ∈ listaNombrePelis(res) | nombrePeli <-- nombres]);
+aux listaNombrePelis(listaPelis : [Pelicula]) : [String] = 
+	[nombre(peli) | peli < -- listaPelis]
+
+5. 
