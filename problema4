@@ -32,11 +32,14 @@ asegura todos([actoresOrdenados(actores(peli)) | peli <-- res]) //invariante4
 
 5.
 
+//Sólo me fijo en 16 y 17. Presupongo que los demás están bien
 
 16. problema venderTicket (c: Cine, p: Pelicula) = result : Ticket {
 		requiere: p ∈ peliculas (c);
+
 		modifica: c;
-		asegura pelicula (result) == p ;
+
+		asegura pelicula(result) == p ;
 		asegura not(usado (result)) ; // version anterior "usado(result) == False"
 		asegura sala(result) ∈ salas (pre(c))  ; // sala(result) ∈ salas(c) no tenes que asegurar esto tambien?
 		asegura not (∃ pe <- peliculas(pre (c))) sala(pre(c), pe) == sala(result) ;
@@ -46,7 +49,8 @@ asegura todos([actoresOrdenados(actores(peli)) | peli <-- res]) //invariante4
 		asegura mismos (salas (pre (c)), salas (c)) ;
 		asegura todos ([sala (pre (c), pe) == sala (c, pe) | pe <- peliculas (pre (c)) ]) ;
 		asegura todos ([espectadores (pre(c), sa) == espectadores (c, sa) | sa <- salas (pre (c)) ]) ;
-		} 
+
+}
 
 17. problema ingresarASalas (c: Cine, s: Sala, t: Ticket) {
 		requiere: s ∈ salas (c) ;
