@@ -1,3 +1,4 @@
 invariante [salasConsistentes] Que indica que dos peliculas diferentes no se pueden proyectar en la misma sala.
-noHayRepetidos([sala(c,peli) | peli <-- peliculas(c)])
+sinRepetidos([sala(c,peli) | peli <-- peliculas(c)])
 //funca si para cada pelicula distinta se le aplica una sala, si hay mas salas por pelicula ya no sirve.
+//funciona porque invariante sin salas repetidas en cine.
