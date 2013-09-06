@@ -254,27 +254,30 @@ PUTOOOOOOO
 }
 
 
-//Bien, supongo, no sé cómo romperlo
+//Bien
+
 18- problema pasarA3dUnaPelícula(c: Cine, nombre: String) = result: Película {
 	
-	requiere ∃(p <- películas(c)) nombre(p) == nombre;
+	requiere laPeliculaExista : ∃(p <- películas(c)) nombre(p) == nombre;
 	
 	modifica c;
 	
-	asegura result ∈ películas(c);
 	asegura nombre(result) == nombre;
-	asegura nombre(c) == nombre(pre(c));
-	asegura mismos(salas(c), salas(pre(c)));
-	asegura mismos( [peli | peli <- películas(c), nombre(peli) != nombre],
-		[peli | peli <- películas(pre(c)), nombre(peli) != nombre] );
-	asegura (∀ p <- películas(c)) sala(c, p) == sala(pre(c), p);
-	asegura (∀ s <- salas(c)) espectadores(c, s) == espectadores(pre(c), s);
-	asegura mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(pre(c)));
 	asegura es3D(result);
 	asegura generos(result) == generos(películaDeNombre(pre(c), nombre));
 	asegura actores(result) == actores(películaDeNombre(pre(c), nombre));
+	asegura sala(c, result) == sala (c, (peliculaDeNombre(pre(c), nombre)))
 
+	asegura nombre(c) == nombre(pre(c));
+	asegura mismos(salas(c), salas(pre(c)));
+	asegura lasPelisNoCambian : mismos(nombrePelisDeCine(c),nombrePelisDeCine(pre(c)));
+	asegura lasSalasNoCambian : (∀ p <- películas(c), nombre(p)!= nombre) sala(c, p) == sala(pre(c), p);
+	asegura losEspectadoresNoCambian : (∀ s <- salas(c)) espectadores(c, s) == espectadores(pre(c), s);
+	asegura losTicketsNoCambian: mismos(nombrePelisDeTicketsDeCine(c), nombrePelisDeTicketsDeCine(pre(c)));
 }
-
-aux películaDeNombre(c: Cine, n: String) : Película = 
+aux nombrePelisDeCine(c:Cine) : [String] =
+	[nombre(p) | p<-peliculas(c)]
+aux nombrePelisDeTicketsDeCine(c:Cine) : [String] =
+	[nombre(pelicula(t)) | t<-ticketsVendidosSinUsar(c)]
+aux películaDeNombre(c: Cine, n: String) : Película =
 	cab([peli | peli <- películas(c), nombre(peli) == n]);
