@@ -188,8 +188,8 @@ aux pelisDeSalas(c: Cine, sal: [Sala]) : [Peliculas] = [peliDeSala(c, s) | s <- 
 14- problema cerrarSalasDeLaCadena (cs : [Cine], e : Int ) {
 	requiere e >= 0 ;
 	modifica cs ;
-	asegura long (cs) == long (pre(cs)) ;
-	asegura (∀ c <- pre (cs) ) (∃ c2 <- cs) seParecen (c, c2, e) ;
+	asegura mismaListaDeCines : long (cs) == long (pre(cs)) ;
+	asegura cinesSeParecen : (∀ c <- pre (cs) ) (∃ c2 <- cs) seParecen (c, c2, e) ;
 }
 
 aux seParecen (c : Cine, c2 : Cine, e : Int) : Bool =
@@ -198,7 +198,7 @@ aux seParecen (c : Cine, c2 : Cine, e : Int) : Bool =
 	mismasPeliculas (c, c2) &&
 	pelisEnMismasSalas (c, c2) &&
 	mismosEspectadores (c, c2) &&
-	mismosTickets (c, c2) ;
+	mismosTickets (c, c2) ;o
 		
 aux nombresIguales(c, c2: Cine) : Bool = 
 	nombre(c) = nombre(c2);
