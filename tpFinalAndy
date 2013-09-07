@@ -1,4 +1,4 @@
-//BIEN
+﻿//BIEN
 1- invariante generosOrdenados : generosOrd(generos(p));
 
 aux generosOrd(gs:[Género]) : Bool = (∀ i <-[1..|gs|)) ord(gs[i-1]) <= ord(gs[i]);
@@ -11,32 +11,14 @@ aux actoresOrd(as:[Actor]) : Bool = (∀ i <- [1..|as|)) as[i-1] <= as[i];
 //BIEN
 3- problema agruparPelisPorGénero(ps:[Película]) = result : [(Género, [Película])] {
 	
-	// Todo género en cada dupla de result, debería pertenecer a los géneros de las películas de entrada
-	asegura generosSalidaEnEntrada : 
-		(∀ dupla <- result) prm(dupla) ∈ obtenerGeneros(ps);
-	
-	// Toda película de la dupla de result, pertenece a la lista de películas de entrada 
-	asegura pelisSalidaEnEntrada:
-		(∀ dupla <- result, peli <- sgd(dupla)) peli ∈ ps;
-	
-	// Se fija que las películas de salida no esten repetidas
-	asegura pelisSalidaSinRepetir: 
-		(∀ dupla <- result) sinRepetir(sgd(dupla));
-	
-	// Los géneros de cada dupla de result deberían corresponder
-	// con los géneros de las películas de esa dupla
-	asegura generoSalidaEnPelis:
-		(∀ dupla <-result, peli <- sgd(dupla)) prm(dupla) ∈ generos(peli);
-	
-	// Se fija que los géneros de salida no se repitan
-	asegura generosSalidaSinRepetir:
-		sinRepetidos(obtenerGenerosDupla(result));
-	
-	asegura pelisEntradaEnSalida:
-		(∀ peli <- ps, dupla <- result, prm(dupla) ∈ generos(peli)) peli ∈ sgd(dupla);
-	
-	asegura generosEntradaEnSalida: 
-		(∀ genero <- obtenerGeneros(ps)) genero ∈ obtenerGenerosDupla(result);	
+	asegura generosDeSalidaEnEntrada: (∀ dupla <- result) prm(dupla) ∈ obtenerGeneros(ps);
+	asegura pelisSalidaEnEntrada: (∀ dupla <- result, peli <- sgd(dupla)) peli ∈ ps;
+	asegura pelisSalidaSinRepetir: (∀ dupla <- result) sinRepetir(sgd(dupla));
+	asegura generosSalidaSinRepetir: sinRepetidos(obtenerGenerosDupla(result))
+
+	asegura generoSalidaEnPelis: (∀ dupla <-result, peli <- sgd(dupla)) prm(dupla) ∈ generos(peli);
+	asegura pelisEntradaEnSalida: (∀ peli <- ps, dupla <- result, prm(dupla) ∈ generos(peli)) peli ∈ sgd(dupla);
+	asegura generosEntradaEnSalida:	(∀ genero <- obtenerGeneros(ps)) genero ∈ obtenerGenerosDupla(result);	
 }
 
 aux obtenerGeneros(ps:[Pelicula]) : [Género] = [genero(p) | p <- ps];
@@ -48,9 +30,6 @@ aux obtenerGenerosDupla(res = [(Género, [Película])]) : [Género] =
 
 4. problema generarSagaDePeliculas(as:[Actor], gs:[Genero], nombres:[String]) = res : [Pelicula]
   ∈ ∉ ∃
-//Que genera una pelıcula por cada nombre en nombres con los mismos actores y generos para todas. No hay nombres repetidos.
-//Vamos con la ida. Como queremos el resultado?
-//Si nos damos cuenta, este es el caso opuesto al ejercicio anterior donde sacabamos la informacion de pelicula, ahora tenemos que armar una/s pelicula/s en base a informacion que nos dan (as, gs, nombres).
 
 asegura todos([ mismos ( generos(peli) , elementosSinRepetir(gs)) | peli <-- res]);   
 asegura todos([ mismos ( actores(peli) , elementosSinRepetir(as)) | peli <-- res]);
@@ -59,28 +38,27 @@ asegura mismos ( listaNombrePelis(res) , elementosSinRepetir(nombres));
 aux elementosSinRepetir ( s : [T] ) : [T] = [s[i] | i<- [0..|s|) , not (∃ j <- [0..|s|) , j != i ) s[i] = s[j] ]  
 aux listaNombrePelis(listaPelis : [Pelicula]) : [String] = [nombre(peli) | peli < -- listaPelis]
 
-//Si no das generos, ni actores, se puede seguir creando una saga a partir del nombre simplemente?
-
 //BIEN
 5- problema películaMenosVista(ts:[Ticket]) = result: Película {
 	
 	requiere ts != [];
-	requiere tUsados(ts) != [];
+	requiere ticketsUsados(ts) != [];
 	
-	asegura result ∈  películasVistas(tUsados(ts));
-	asegura no(∃ p <- películasVistas(tUsados(ts))) ticketsPorPelícula(p, tUsados(ts)) 
-		< ticketsPorPelícula(result, tUsados(ts));
+	asegura result ∈  películasVistas(ticketsUsados(ts));
+	asegura esLaPeliculaMenosVista: no(∃ p <- películasVistas(ticketsUsados(ts))) ticketsPorPelícula(p, ticketsUsados(ts)) 
+		< ticketsPorPelícula(result, ticketsUsados(ts));
 	
 }
 
-aux tUsados(s: [Ticket]) : [Ticket] = [x | x <- s, usado(x)];
+aux ticketsUsados(s: [Ticket]) : [Ticket] = [x | x <- s, usado(x)];
 aux películasVistas(s:[Ticket]) : [Película] = [película(x) | x <- s];
 aux ticketsPorPelícula(p: Película, tic: [Ticket]): Int = 
 	|[t | t <- tic, película(t) == p]|;
 
+
 //BIEN
 6- problema todosLosTicketsParaLaMismaSala(ts: [Ticket]) = result : Bool {
-	asegura res = (∀ t <- [0..|ts|-1)) sala(ts[i]) == sala(ts[i+1]);
+	asegura res == (∀ t <- [0..|ts|-1)) sala(ts[i]) == sala(ts[i+1]);
 }
 
 //BIEN
@@ -100,12 +78,15 @@ aux ticketsPorPelícula(p: Película, tic: [Ticket]): Int =
 
 8- invariante salaConsistente: sinRepetidos([sala(c, peli) | peli <- peliculas(c)]);
 
+
 //Qué pasa si película(t) no está en el cine c? Se indefine o da false?
 9- invariante losTicketsVendidosSonParaPelículasDelCine: 
-	(∃ p <- peliculas (c) ) pelicula (t) == p ; 
-	(∀ t <- ticketsVendidosSinUsar(c)) sala(t) == sala(c, película(t)) ;
+	
+	(∀ t <- ticketsVendidosSinUsar(c)) sala(t) == sala(c, película(t)) && pelicula(t) ∈ peliculas (c) 
 
 //Borrar invariantes comentados
+
+
 10- problema cineVacío(n: String) = result : Cine{
 	
 	asegura nombre(res) == n;
@@ -117,7 +98,7 @@ aux ticketsPorPelícula(p: Película, tic: [Ticket]): Int =
 }
 
 //Bien
-11- agregarPelícula(c: Cine, p: Película, s: Sala){
+11- problema agregarPelícula(c: Cine, p: Película, s: Sala){
 	
 	requiere s ∈ salas(c);
 	requiere not(∃ pe <- película(c)) sala(c, pe) == s;
@@ -137,40 +118,35 @@ aux ticketsPorPelícula(p: Película, tic: [Ticket]): Int =
 
 //Bien
 12- problema cerrarSala(c: Cine, s: Sala) {
+	// no cerramos salas con tickets vendidos
 	
 	requiere s ∈ salas(c); 
 	requiere (∀ t <- ticketsVendidosSinUsar(c)) sala(t) != s; //agregado por profesor
-	                                                          // no cerramos salas con tickets vendidos
-	
+	                                                          
 	modifica c;
 	
-	asegura mismos(salas(c), [sal | sal <- salas(pre(c)), sal !=s]));
+	asegura salasNuevas: mismos(salas(c), [sal | sal <- salas(pre(c)), sal !=s]));
 	asegura nombre(c) == nombre(pre(c));
-	asegura mismos(películas(c), [peli | peli <- películas(pre(c)), peli != peliDeSala(s, c)] );
-	asegura (∀ p <- películas(c)) sala(c, p) == sala(pre(c), p);
-	asegura (∀ sal <- salas(c)) espectadores(c, sal) == espectadores(pre(c), sal);
+	asegura peliculasSinLasDeSalasCerradas: mismos(películas(c), [peli | peli <- películas(pre(c)), peli != peliDeSala(s, c)] );
+	asegura salasDePelisNoCerradasNoCambian: (∀ p <- películas(c)) sala(c, p) == sala(pre(c), p);
+	asegura cantidadDeEspectadoresNoCambian: espectadores(∀ sal <- salas(c)) espectadores(c, sal) == espectadores(pre(c), sal);
 	asegura mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(pre(c)));
 
 }
  	aux peliDeSala (s : Sala, c : Cine) : Pelicula = cab ([ peli | peli <- peliculas (c), sala (c, peli) == s] )
  
-//FALTA AUX peliDeSala
 
 13- problema cerrarSalas(c: Cine, e: Int) {
 	//no cerramos salas con tickets vendidos
 
 	modifica c;
 	
-	asegura mismoNombre: nombre(c) == nombre(pre(c));
-	
 	asegura salasCerradas: mismos(salas(c), salasSinTicketsVendidosConMenosDe(pre(c), e) );
-	
-	asegura mismasPelículas: mismos(películas(c), pelisDeSalas(pre(c), salasConMasDe(pre(c), e)) );
-	
-	asegura pelisEnMismasSalas: (∀ p <- películas(c)) sala(c,p) == sala(pre(c), p);
-	
+	asegura mismasPelículasDeSalasQueNoCerre: mismos(películas(c), pelisDeSalas(pre(c), salasConMasDe(pre(c), e)) );
+
+	asegura mismoNombre: nombre(c) == nombre(pre(c));
+	asegura pelisEnMismasSalasQueNoCerre: (∀ p <- películas(c)) sala(c,p) == sala(pre(c), p);
 	asegura mismosEspectadores: (∀ sala <- salas(c)) espectadores(c, sala) == espectadores(pre(c), sala);
-	
 	asegura mismosTickets: mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(pre(c)));
 
 }
@@ -219,9 +195,9 @@ aux mismasPelículas(c, c2: Cine, e: Int) : Bool =
 	
 	requiere: s ∈ salas(c);
 	requiere: (∃ p <- películas(c)) sala(c, p) == s;
-	
-	asegura sala(c, result) == s;
+
 	asegura result ∈ películas(c);
+	asegura sala(c, result) == s;
 	
 }
 
@@ -229,83 +205,66 @@ aux mismasPelículas(c, c2: Cine, e: Int) : Bool =
 
 16. problema venderTicket (c: Cine, p: Pelicula) = result : Ticket {
 
-		requiere: p ∈ peliculas (c);
+	requiere: p ∈ peliculas (c);
 
-		modifica: c;
+	modifica: c;
 
-		asegura peliculaDelTicketEsLaDada : pelicula (result) == p ;
-
-		asegura ticketNoEstaUsado : not(usado (result)) ; 
-		
-		asegura salasDelCineNoCambian : mismos (salas (pre (c)), salas (c)) ;
-
-		asegura salaDelTicketEsDelCine : sala(result) ∈ salas (pre(c))  ;	// sala(result) ∈ salas(c) no tenes que asegurar esto tambien? No.
-																			// las salas del cine no cambian.
-		asegura salaDelTicketEsLaDeLaPeli : sala (result) == sala(pre(c), p) ;
-
-		asegura sumoTicketAUsados : mismos (ticketsVendidosSinUsar( pre(c) ++ [result], ticketsVendidosSinUsar(c)) ;
-
-		asegura noCambiaNombreDelCine : nombre (c) == nombre (pre(c)) ;
-
-		asegura peliculasDelCineNoCambian : mismos (peliculas (pre (c)), peliculas (c)) ;
-
-		asegura salasDeLasPelisNoCambian : todos ([sala (pre (c), pe) == sala (c, pe) | pe <- peliculas (pre (c)) ]) ;
-
-		asegura espectadoresDeLasSalasNoCambian : todos ([espectadores (pre(c), sa) == espectadores (c, sa) | sa <- salas (pre (c)) ]) ;
-		
+	asegura peliculaDelTicketEsLaDada : pelicula (result) == p ;
+	asegura ticketNoEstaUsado : not(usado (result)) ; 
+	asegura salaDelTicketEsLaDeLaPeli : sala (result) == sala(pre(c), p) ;
+	
+	asegura sumoTicketANoUsados : mismos (ticketsVendidosSinUsar( pre(c) ++ [result], ticketsVendidosSinUsar(c)) ;
+	asegura noCambiaNombreDelCine : nombre (c) == nombre (pre(c)) ;
+	asegura salasDelCineNoCambian : mismos (salas (pre (c)), salas (c)) ;
+	asegura peliculasDelCineNoCambian : mismos (peliculas (pre (c)), peliculas (c)) ;
+	asegura salasDeLasPelisNoCambian : todos ([sala (pre (c), pe) == sala (c, pe) | pe <- peliculas (pre (c)) ]) ;
+	asegura espectadoresDeLasSalasNoCambian : todos ([espectadores (pre(c), sa) == espectadores (c, sa) | sa <- salas (pre (c)) ]) ;	
 } 
 
 17. problema ingresarASalas (c: Cine, s: Sala, t: Ticket) {
-		requiere: s ∈ salas (c) ;
-		requiere: sala (t) == s ;
-		requiere: t ∈ ticketsVendidosSinUsar (c) ;
+	requiere: s ∈ salas (c) ;
+	requiere: sala (t) == s ;
+	requiere: t ∈ ticketsVendidosSinUsar (c) ;
 		
-		modifica: c,t ;
+	modifica: c,t ;
 		
-		asegura peliculaDelTicketNoCambia : pelicula(t) == pelicula(pre(t)) ;
+	asegura peliculaDelTicketNoCambia : pelicula(t) == pelicula(pre(t)) ;
+	asegura salaDelTicketNoCambia : sala (t) == sala(pre(t)) ;		
+	asegura marcarElTicketComoUsado : usado(t);
 		
-		asegura salaDelTicketNoCambia : sala (t) == sala(pre(t)) ;
-		
-		asegura marcarElTicketComoUsado : usado(t);
-		
-		asegura salasNoCambian : mismos(salas(c), salas (pre (c)));
-		
-		asegura sumarUnEspectador : espectadores(c, s) == espectadores(pre(c), s) + 1 ;
+	asegura sumarUnEspectador : espectadores(c, s) == espectadores(pre(c), s) + 1 ;
+	asegura sacoElTicketDeSinUsar : mismos(ticketsVendidosSinUsar(c), [ti | ti <- ticketsVendidosSinUsar(pre(c)), ti != t]) ;
 
-		
-		asegura sacoElTicketDeSinUsar : mismos(ticketsVendidosSinUsar(c), [ti | ti <- ticketsVendidosSinUsar(pre(c)), ti != t]) ;
-		
-		asegura nombreDelCineNoCambia : nombre(c) == nombre(pre (c)) ;
-		
-		asegura peliculasDelCineNoCambia : mismos(peliculas (c), peliculas (pre (c))) ;
-		
-		asegura pelisViejasNoCambianSala : todos( [sala (c, p) == sala (pre(c), p) | p <- peliculas (pre (c) ] ) ;
-		
-		asegura espectadoresNoCambian : todos( [espectadores (c, sa) == espectadores (pre(c), sa) | sa <- salas (pre (c)), sa != s]) ;
+	asegura salasNoCambian : mismos(salas(c), salas (pre (c)));		
+	asegura nombreDelCineNoCambia : nombre(c) == nombre(pre (c)) ;
+	asegura peliculasDelCineNoCambia : mismos(peliculas (c), peliculas (pre (c))) ;
+	asegura pelisNoCambianSala : todos( [sala (c, p) == sala (pre(c), p) | p <- peliculas (pre (c) ] ) ;
+	asegura espectadoresNoCambianDeOtrasSalas : todos( [espectadores (c, sa) == espectadores (pre(c), sa) | sa <- salas (pre (c)), sa != s]) ;
 }
 
 
-//Bien, supongo, no sé cómo romperlo
 18- problema pasarA3dUnaPelícula(c: Cine, nombre: String) = result: Película {
 	
-	requiere ∃(p <- películas(c)) nombre(p) == nombre;
+	requiere laPeliculaExista : ∃(p <- películas(c)) nombre(p) == nombre;
 	
 	modifica c;
 	
-	asegura result ∈ películas(c);
 	asegura nombre(result) == nombre;
-	asegura nombre(c) == nombre(pre(c));
-	asegura mismos(salas(c), salas(pre(c)));
-	asegura mismos( [peli | peli <- películas(c), nombre(peli) != nombre],
-		[peli | peli <- películas(pre(c)), nombre(peli) != nombre] );
-	asegura (∀ p <- películas(c)) sala(c, p) == sala(pre(c), p);
-	asegura (∀ s <- salas(c)) espectadores(c, s) == espectadores(pre(c), s);
-	asegura mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(pre(c)));
 	asegura es3D(result);
 	asegura generos(result) == generos(películaDeNombre(pre(c), nombre));
 	asegura actores(result) == actores(películaDeNombre(pre(c), nombre));
+	asegura sala(c, result) == sala (c, (peliculaDeNombre(pre(c), nombre)))
 
+	asegura nombre(c) == nombre(pre(c));
+	asegura mismos(salas(c), salas(pre(c)));
+	asegura lasPelisNoCambian : mismos(nombrePelisDeCine(c),nombrePelisDeCine(pre(c)));
+	asegura lasSalasNoCambian : (∀ p <- películas(c), nombre(p)!= nombre) sala(c, p) == sala(pre(c), p);
+	asegura losEspectadoresNoCambian : (∀ s <- salas(c)) espectadores(c, s) == espectadores(pre(c), s);
+	asegura losTicketsNoCambian: mismos(nombrePelisDeTicketsDeCine(c), nombrePelisDeTicketsDeCine(pre(c)));
 }
-
-aux películaDeNombre(c: Cine, n: String) : Película = 
+aux nombrePelisDeCine(c:Cine) : [String] =
+	[nombre(p) | p<-peliculas(c)]
+aux nombrePelisDeTicketsDeCine(c:Cine) : [String] =
+	[nombre(pelicula(t)) | t<-ticketsVendidosSinUsar(c)]
+aux películaDeNombre(c: Cine, n: String) : Película =
 	cab([peli | peli <- películas(c), nombre(peli) == n]);
