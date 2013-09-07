@@ -109,7 +109,8 @@ aux ticketsPorPelícula(p: Película, tic: [Ticket]): Int =
 10- problema cineVacío(n: String) = result : Cine{
 	
 	asegura nombre(res) == n;
-	asegura salas(res) == []; //sala(c,p) se indefine
+	asegura salas(res) == []; //sala(c,p) se indefineç
+	
 	//asegura sinRepetidos(nombreDePelículas(res));
 	//asegura(∀ t <- ticketsVendidosSinUsar(res)) no(usado(t));
 	//Se cumplen por los invariates, los dos comentados ^
@@ -150,7 +151,8 @@ aux ticketsPorPelícula(p: Película, tic: [Ticket]): Int =
 	asegura mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(pre(c)));
 
 }
-
+ 	aux peliDeSala (s : Sala, c : Cine) : Pelicula = cab ([ peli | peli <- peliculas (c), sala (c, peli) == s] )
+ 
 //FALTA AUX peliDeSala
 
 13- problema cerrarSalas(c: Cine, e: Int) {
