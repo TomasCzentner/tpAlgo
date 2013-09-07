@@ -1,0 +1,18 @@
+14 - problema cerrarSalasDeLaCadena(cs:[Cine], e:Int){
+	requiere e >= 0;
+	modifica cs;
+
+	asegura mismoNombre: mismos(nombreDeCines(cs), nombreDeCines(pre(cs)))
+
+	asegura salasCerradas: mismos(salas(c), salasSinTicketsVendidosConMenosDe(pre(c), e) );
+
+	asegura mismasPelículas: mismos(películas(c), pelisDeSalas(pre(c), salasConMasDe(pre(c), e)) );
+
+	asegura pelisEnMismasSalas: (? p <- películas(c)) sala(c,p) == sala(pre(c), p);
+
+	asegura mismosEspectadores: (? sala <- salas(c)) espectadores(c, sala) == espectadores(pre(c), sala);
+	asegura mismosTickets: mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(pre(c)));
+
+}
+aux nombresDeCines(cs:[Cine]) : [String] =
+	[nombre(c) | c<-cs]
