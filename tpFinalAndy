@@ -140,6 +140,7 @@ aux ticketsPorPelícula(p: Película, tic: [Ticket]): Int =
 	
 	requiere s ∈ salas(c); 
 	requiere (∀ t <- ticketsVendidosSinUsar(c)) sala(t) != s; //agregado por profesor
+	                                                          // no cerramos salas con tickets vendidos
 	
 	modifica c;
 	
@@ -156,6 +157,7 @@ aux ticketsPorPelícula(p: Película, tic: [Ticket]): Int =
 //FALTA AUX peliDeSala
 
 13- problema cerrarSalas(c: Cine, e: Int) {
+	//no cerramos salas con tickets vendidos
 
 	modifica c;
 	
@@ -183,7 +185,34 @@ aux salasConMasDe ( c: Cine, e: Int): [Sala] =
 aux pelisDeSalas(c: Cine, sal: [Sala]) : [Peliculas] = [peliDeSala(c, s) | s <- sal];
 
 
-14-
+14- problema cerrarSalasDeLaCadena (cs : [Cine], e : Int ) {
+	requiere e >= 0 ;
+	modifica cs ;
+	asegura long (cs) == long (pre(cs)) ;
+	asegura (∀ c <- pre (cs) ) (∃ c2 <- cs) seParecen (c, c2, e) ;
+}
+
+aux seParecen (c : Cine, c2 : Cine, e : Int) : Bool =
+	nombresIguales (c, c2) &&
+	salasDelNuevoCine (c, c2, e) &&
+	mismasPeliculas (c, c2) &&
+	pelisEnMismasSalas (c, c2) &&
+	mismosEspectadores (c, c2) &&
+	mismosTickets (c, c2) ;
+		
+aux nombresIguales(c, c2: Cine) : Bool = 
+	nombre(c) = nombre(c2);
+aux mismasSalas(c, c2 : Cine, e: Int) : Bool = 
+	mismos(salas(c), salasSinTicketsVendidosConMenosDe(c2, e));
+aux pelisEnMismasSalas(c, c2 : Cine) : Bool = 
+	(∀p <- películas(c) sala(c, p) == sala(c2, p);
+aux mismosEspectadores(c, c2: Cine) : Bool = 
+	(∀ sala <- salas(c)) espectadores(c, sala) == espectadores(c2, sala);
+aux mismosTickets(c, c2: Cine) : Bool = 
+	mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(c2));
+aux mismasPelículas(c, c2: Cine, e: Int) : Bool = 
+	mismos(películas(c), pelisDeSalas(c2, salasConMasDe(c2, e)));
+
 
 //Bien
 15- problema película(c: Cine, s: Sala) = result: Película {
