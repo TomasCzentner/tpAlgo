@@ -96,12 +96,14 @@ aux ticketsPorPelícula(p: Película, tic: [Ticket]): Int =
 
 }
 
-//Bien
+//Bien 
+
 8- invariante salaConsistente: sinRepetidos([sala(c, peli) | peli <- peliculas(c)]);
 
 //Qué pasa si película(t) no está en el cine c? Se indefine o da false?
 9- invariante losTicketsVendidosSonParaPelículasDelCine: 
-	(∀ t <- ticketsVendidosSinUsar(c)) sala(t) == sala(c, película(t));
+	(∃ p <- peliculas (c) ) pelicula (t) == p ; 
+	(∀ t <- ticketsVendidosSinUsar(c)) sala(t) == sala(c, película(t)) ;
 
 //Borrar invariantes comentados
 10- problema cineVacío(n: String) = result : Cine{
