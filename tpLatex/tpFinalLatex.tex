@@ -1,0 +1,169 @@
+\documentclass[spanish,a4paper]{article}
+
+\usepackage[spanish]{babel}
+\selectlanguage{spanish}
+\usepackage[utf8]{inputenc}
+%\usepackage{bbm}
+\usepackage{framed}
+\input{macrosAlgo1}
+
+\newcommand{\comen}[2]{%
+\begin{framed}
+\noindent \textsf{#1:} #2
+\end{framed}
+}
+
+\begin{document}
+
+\materia{Algoritmos y Estructura de Datos I}
+\cuatrimestre{2}
+\anio{2013}
+
+\nombre{\LARGE TPE Cine}
+
+\titulotp
+
+
+\sinonimo{Actor}{String}
+\sinonimo{Sala}{\ent}
+\enumerado{género}{Aventura, Comedia, Drama, Romántica, Terror}
+
+\vspace{0.5cm}
+
+\begin{tipo}{Pelicula}
+	\observador{nombre}{p: Pelicula}{String}
+	\observador{géneros}{p: Pelicula}{[Género]}
+	\observador{actores}{p: Pelicula}{[Actor]}
+	\observador{es3D}{p: Pelicula}{Bool}
+	\invariante[sinActoresRepetidos]{sinRepetidos(actores(p))}
+	\invariante[sinGénerosRepetidos]{sinRepetidos(generos(p))}
+	\invariante[génerosOrdenados]{generosOrd(generos(p))}
+	\invariante[actoresOrdenados]{actoresOrd(actores(p))}
+\end{tipo}
+
+
+\begin{problema}{agruparPelisPorGenero}{ps:[Pelicula]}{[(Genero, [Pelicula])]}
+	\asegura[generoSalidaEntrada]{(\forall  dupla \selec result)prm(dupla) 			\in obtenerGeneros(ps)}
+	\asegura[pelisSalidaEntrada]{(\forall dupla \selec result, peli \selec 			sgd(dupla))peli \in ps}
+	\asegura[pelisSalidaSinRepetir]{(\forall dupla \selec result)sinRepetir(sgd(dupla))}
+	\asegura[generosSalidaEnPelis]{(\forall dupla \selec result, peli \selec sgd(dupla)) prm(dupla) \in generos(peli)}
+	\asegura[generosSalidaSinRepetir]{sinRepetidos(obtenerGenerosDupla(result))}
+	\asegura[pelisEntradaEnSalida]{(\forall peli \selec ps, dupla \selec result, prm(dupla) \in generos(peli))peli \in sgd(dupla)}
+	\asegura[generosEntradaEnSalida]{(\forall genero \selec obetenerGeneros(ps))genero \in obtenerGenerosDupla(result)}
+	\aux{obtenerGeneros}{ps: [Pelicula]}{[Genero]}{\comp{genero(p)}{p \selec ps}}
+	\aux{obtenerGenerosDupla}{x: [(Genero,[Pelicula])]}{[Genero]}{\comp{prm(dupla)}{dupla \selec x}}
+\end{problema}
+
+
+\begin{problema}{generarSagaDePeliculas}{as:[Actor], gs:[Genero], nombres:[String]}{[Pelicula]}{
+	\asegura[mismosGeneros]{(\forall peli \selec result)mismos(generos(peli), elementosSinRepetir(gs)}
+	\asegura[mismosActores]{(\forall peli \selec result)mismos(actores(peli), elementosSinRepetir(as)}
+	\asegura[todosNombreEnNombres]{mismos(listaNombrePelis(res), elementosSinRepetir(nombres))}
+	\aux{listaNombrePelis}{listaPelis: [Pelicula]}{[String]}{\comp{nombre(peli)}{peli \selec listaPelis}}
+	\aux{elementosSinRepetir}{s: [T]}{[T]}{\comp{s_i}{i \selec [0..|s|), \neg(\exists j \selec [0..|s|), j \neq i) s_i == s_j}}
+}
+\end{problema}
+
+\begin{tipo}{Ticket}
+	\observador{película}{t: Ticket}{Pelicula}
+	\observador{sala}{t: Ticket}{Sala}
+	\observador{usado}{t: Ticket}{Bool}
+\end{tipo}
+
+\begin{problema}{películaMenosVista}{ts : [Ticket]}{\bool}
+	\requiere[]{ts \neq \lv}
+	\requiere[]{ticketsUsados(ts) \neq \lv}
+	
+	\asegura[peliEstaEnTickets]{result \in peliculasVistas(ticketsUsados(ts))}
+	\asegura[esLaPeliMenosVista]{\neg(\exists p \selec peliculasVistas(ticketsUsados(ts)) ticketsPorPelicula(p, ticketsUsados(ts)) < ticketsPorPelicula(result, ticketsUsados(ts))}
+	\aux{}{}{}{}
+\end{problema}
+
+\begin{problema}{todosLosTicketsParaLaMismaSala}{ts:[Ticket]}{\bool}
+\end{problema}
+
+\begin{problema}{cambiarSala}{ts:[Ticket], vieja: Sala, nueva: Sala}{}{}
+\end{problema}
+
+
+
+
+\begin{tipo}{Cine}
+	\observador{nombre}{c: Cine}{String}
+	\observador{películas}{c: Cine}{[Peliculas]}
+	\observador{salas}{c: Cine}{[Sala]}
+	\observador{sala}{c: Cine, p: Pelicula}{Sala}
+		\requiere{p \in peliculas(c)}
+	\observador{espectadores}{c: Cine, s: Sala}{\ent}
+		\requiere{s \in salas(c)}
+	\observador{ticketsVendidosSinUsar}{c: Cine}{[Ticket]}
+
+	\invariante[sinPeliculasRepetidas]{sinRepetidos(nombresDePeliculas(c))}
+	\invariante[sinSalasRepetidas]{sinRepetidos(salas(c))}
+	\invariante[salasDeCineSonSalas]{(\forall p \leftarrow peliculas(c)) sala(c,p) \in salas(c) }
+	\invariante[espectadoresNoNegativos]{(\forall s \leftarrow salas(c)) espectadores(c,s) \geq 0 }
+	\invariante[losTicketsVendidosEstanSinUsar]{(\forall t \selec ticketsVendidosSinUsar(c)) \lnot usado(t) }
+	\invariante[salasConsistentes]{\dots}
+	\invariante[losTicketsVendidosSonParaPeliculasDelCine]{\dots}
+\end{tipo}
+
+\begin{problema}{cineVacio}{n: String}{Cine}
+	
+\end{problema}
+
+\begin{problema}{agregarPelicula}{c: Cine, p: Pelicula, s: Sala}{}{}
+\end{problema}
+
+
+\begin{problema}{cerrarSala}{c: Cine, s: Sala}{}{}
+
+\end{problema}
+
+\begin{problema}{cerrarSalas}{c: Cine, e: \ent}{}{
+\requiere {e \ge 0}
+\modifica {c}
+\asegura {seParecen(c,pre(c),e)}
+}
+\end{problema}
+
+
+\begin{problema}{cerrarSalasDeLaCadena}{cs: [Cine], e: \ent}{}{}
+	\requiere {e \ge 0}
+	\modifica {cs}
+	\asegura [mismaListaDeCines]{long(cs) == long(pre(cs)}
+	\asegura [cinesSeParecen]{(\forall c` \selec pre(cs))(\exists c \selec cs)seParecen(c, c`, e)}
+\end{problema}
+
+
+\begin{problema}{pelicula}{c: Cine, s: Sala}{Pelicula}
+\end{problema}
+
+\begin{problema}{venderTicket}{c: Cine, p: Pelicula}{Ticket}
+\end{problema}
+
+\begin{problema}{ingresarASala}{c: Cine, s: Sala, t: Ticket}{}
+\end{problema}
+
+\begin{problema}{pasarA3DUnaPelicula}{c: Cine, nombre: String}{Pelicula}{}
+\end{problema}
+
+
+\section{Auxiliares}
+
+\aux{obtenerGeneros}{ps: [Pelicula]}{[Genero]}{\comp{genero(p)}{p \selec ps}}
+\aux{obtenerGenerosDupla}{x: [(Genero,[Pelicula])]}{[Genero]}{\comp{prm(dupla)}{dupla \selec x}}
+\aux{generosOrd}{gs: [Genero]}{Bool}{(\forall i \selec [0..|gs|, i \neq |gs|)ord(gs_i) \le ord(gs_{i+1})}
+\aux{actoresOrd}{as: [Actores]}{Bool}{(\forall i \selec [0..|as|, i \neq |gs|)ord(as_i) \le ord(as_{i+1})}
+\aux{pelisConExito}{c: Cine, e: \ent}{[Pelicula]}{[peli | sala \selec salasConExito(c, e), peli \selec peliculas(c), sala(c, peli) == sala]}
+\aux{nombresDePeliculas}{c: Cine}{[String]}{[nombre(p) | p \selec peliculas(c)]}
+\aux{tienePeli}{c: Cine, s: Sala}{\bool}{(\exists p \selec pelicula(c)) sala(c,p) = s}
+
+\aux{seParecen}{c: Cine, c`: Cine, e: \ent}{\bool}{\newline nombresIguales(c,c`) \&\&  \newline mismasSalas(c,c`,e) \&\& \newline mismasPeliculas(c,c`) \&\&  \newline pelisEnMismasSalas(c,c`) \&\& \newline mismosEspectadores(c,c`) \&\& \newline mismosTickets(c,c`)}
+\aux{nombresIguales}{c: Cine, c`: Cine}{\bool}{nombre(c) == nombre(c`)}
+\aux{mismasSalas}{c: Cine, c`: Cine, e: \ent}{\bool}{mismos(salas(c), salasSinTicketsVendidosConMasDe(c`, e))}
+\aux{mismasPeliculas}{c: Cine, c`: Cine, e: \ent}{\bool}{mismas(peliculas(c), pelisDeSalas(c`,salasConMasDe(c`, e))}
+\aux{pelisEnMismasSalas}{c: Cine, c`: Cine}{\bool}{(\forall p \selec peliculas(c)) sala(c, p)==sala(c`,p)}
+\aux{mismosEspectadores}{c: Cine, c`: Cine}{\bool}{(\forall sala \selec salas(c))espectadores(c,sala)==espectadores(c`,sala)}
+\aux{mismosTickets}{c: Cine, c`: Cine}{\bool}{mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(c`))}
+
+\end{document}
