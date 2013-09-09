@@ -92,7 +92,7 @@ asegura (∀ i <- [0..|pre(ts)|), sala(pre(ts)[i] != vieja) sala(ts[i]) == sala(
 asegura nombre(res) == n;
 asegura salas(res) == []; //sala(c,p) se indefineç
 
-//asegura sinRepetidos(nombreDePelículas(res));
+//asegura sinRepetidos(nom{breDePelículas(res));
 //asegura(∀ t <- ticketsVendidosSinUsar(res)) no(usado(t));
 //Se cumplen por los invariates, los dos comentados ^
 }
@@ -129,7 +129,7 @@ asegura salasNuevas: mismos(salas(c), [sal | sal <- salas(pre(c)), sal !=s]));
 asegura nombre(c) == nombre(pre(c));
 asegura peliculasSinLasDeSalasCerradas: mismos(películas(c), [peli | peli <- películas(pre(c)), peli != peliDeSala(s, c)] );
 asegura salasDePelisNoCerradasNoCambian: (∀ p <- películas(c)) sala(c, p) == sala(pre(c), p);
-asegura cantidadDeEspectadoresNoCambian: espectadores(∀ sal <- salas(c)) espectadores(c, sal) == espectadores(pre(c), sal);
+asegura cantidadDeEspectadoresNoCambian: (∀ sal <- salas(c)) espectadores(c, sal) == espectadores(pre(c), sal);
 asegura mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(pre(c)));
 
 }
