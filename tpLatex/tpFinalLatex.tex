@@ -202,19 +202,19 @@
 \end{problema}
 
 \begin{problema}{pasarA3DUnaPelicula}{c: Cine, nombre: String}{Pelicula}{}
-	\requiere[]{}
+	\requiere[laPeliculaExiste]{(\exists p \selec peliculas(c))nombre(p) == nombre}
 	\modifica{c}
-	\asegura[]{}
-	\asegura[]{}
-	\asegura[]{}
-	\asegura[]{}
-	\asegura[]{}
-	\asegura[]{}
-	\asegura[]{}
-	\asegura[]{}
-	\asegura[]{}
-	\asegura[]{}
-	\asegura[]{}
+	\asegura[nombreResultadoIgualEntrada]{nombre(result) == nombre}
+	\asegura[peli3D]{es3D(result)}
+	\asegura[generoResultadoIgualEntrada]{generos(result) == generos(peliculaDeNombre(pre(c), nombre))}
+	\asegura[actoresResultadoIgualEntrada]{actores(result) == actores(peliculaDeNombre(pre(c), nombre))}
+	\asegura[salaResultadoIgualEntrada]{sala(c, result) == sala (c, (peliculaDeNombre(pre(c), nombre)))}
+	\asegura[nombreNoCambia]{nombre(c) == nombre(pre(c))}
+	\asegura[salasNoCambian]{salas(c) == salas(pre(c))}
+	\asegura[lasPelisNoCambian]{mismos(nombrePelisDeCine(c),nombrePelisDeCine(pre(c)))}
+	\asegura[lasSalasPorPeliculaNoCambian]{(\forall p \selec peliculas(c), nombre(p)\neq nombre) sala(c, p) == sala(pre(c), p)}
+	\asegura[losEspectadoresNoCambian]{(\forall s \selec salas(c)) espectadores(c, s) == espectadores(pre(c), s)}
+	\asegura[losTicketsNoCambian]{mismos(nombrePelisDeTicketsDeCine(c), nombrePelisDeTicketsDeCine(pre(c)))}
 
 	
 \end{problema}
