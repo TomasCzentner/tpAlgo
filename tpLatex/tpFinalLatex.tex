@@ -113,7 +113,7 @@
 	\invariante[espectadoresNoNegativos]{(\forall s \leftarrow salas(c)) espectadores(c,s) \geq 0 }
 	\invariante[losTicketsVendidosEstanSinUsar]{(\forall t \selec ticketsVendidosSinUsar(c)) \lnot usado(t) }
 	\invariante[salasConsistentes]{sinRepetidos(\comp{sala(c, peli)}{peli \selec peliculas(c)})}
-	\invariante[losTicketsVendidosSonParaPeliculasDelCine]{(\forall t \selec ticketsVendidosSinUsar(c)) \newline sala(t) == sala(c, pelicula(t))\ \&\&\  pelicula(t) \in peliculas(c) }
+	\invariante[losTicketsVendidosSonParaPeliculasDelCine]{(\forall t \selec ticketsVendidosSinUsar(c)) \newline pelicula(t) \in peliculas(c)\ \&\&\ sala(t) == sala(c, pelicula(t))}
 \end{tipo}
 
 \begin{problema}{cineVacio}{n: String}{Cine}
@@ -172,10 +172,33 @@
 \end{problema}
 
 \begin{problema}{venderTicket}{c: Cine, p: Pelicula}{Ticket}
-
+	\requiere[peliculaEnElCine]{p \in peliculas(c)}
+	\modifica{c}
+	\asegura[sumoTicketANoUsados]{mismos(ticketsVendidosSinUsar(pre(c)\masmas \ [result], ticketsVendidosSinUsar(pre(c))}
+	\asegura[noCambiaNombreDelCine]{nombe(c) == nombre(pre(c))}
+	\asegura[salasDelCineNoCambian]{mismos(salas(pre(c)), salas(c))}
+	\asegura[peliculasDelCineNoCambian]{mismos(peliculas(pre(c)), peliculas(c))}
+	\asegura[salasDeLasPelisNoCambian]{(\forall pe \selec peliculas(pre(c))sala(pre(c), pe) == sala(c, pe)}
+	\asegura[espectadoresDeLasSalasNoCambian]{(\forall sa \selec salas(pre(c))espectadores(pre(c), pe) == espectadores(c, pe)}
 \end{problema}
 
 \begin{problema}{ingresarASala}{c: Cine, s: Sala, t: Ticket}{}
+	\requiere[salaEntradaEnCine]{s \in salas(c)}
+	\requiere[salaTicketIgualEntrada]{salta(t) == s}
+	\requiere[ticketEstaEntreLosNoUsados]{t \in ticketsVendidosSinUsar(c)}
+	\modifica{c}
+	\modifica{t}
+	\asegura[peliculaDelTicketNoCambia]{pelicula(t) == pelicula(pre(t))}
+	\asegura[salaDelTicketNoCambia]{sala(t) == sala(pre(t))}
+	\asegura[marcarElTicketComoUsado]{usado(t)}
+	\asegura[sumarUnEspectador]{espectadores(c, s) == espectadores(pre(c), s) + 1}
+	\asegura[sacoElTicketDeSinUsar]{}
+	\asegura[salasNoCambian]{}
+	\asegura[nombreDelCineNoCambia]{}
+	\asegura[peliculasDelCineNoCambia]{}
+	\asegura[pelisNoCambianSala]{}
+	\asegura[espectadoresNoCambianDeOtrasSalas]{}
+	
 \end{problema}
 
 \begin{problema}{pasarA3DUnaPelicula}{c: Cine, nombre: String}{Pelicula}{}
