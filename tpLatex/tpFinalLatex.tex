@@ -221,9 +221,6 @@
 \aux{ticketsUsados}{s: [Ticket]}{[Ticket]}{\comp{x}{x \selec s, usado(x)}}
 \aux{peliculasVistas}{s: [Ticket]}{[Pelicula]}{\comp{pelicula(x)}{x \selec s}}
 \aux{ticketsPorPelicula}{p: Pelicula, tic: [Ticket]}{\ent}{\comp{t}{t \selec tic, pelicula(t) == p}}
-
-\aux{pelisConExito}{c: Cine, e: \ent}{[Pelicula]}{[peli | sala \selec salasConExito(c, e),\newline peli \selec peliculas(c), sala(c, peli) == sala]}
-
 \aux{elementosSinRepetir}{s: [T]}{[T]}{\comp{s_i}{i \selec [0..|s|), \neg(\exists j \selec [0..|s|), j \neq i) s_i == s_j}}
 \aux{peliDeSala}{s: Sala, c: Cine}{Pelicula}{cab([peli | peli \selec peliculas(c), sala(c, peli) == s])}
 \aux{salaSinTicketsVendidosConMasDe}{c: Cine, e \ent}{[Sala]}{[sala | sala \selec salas(c), (\forall t \selec ticketsVendidosSinUsar(c)) \newline
