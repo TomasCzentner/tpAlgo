@@ -221,7 +221,8 @@
 
 
 \section{Auxiliares}
-
+\aux{cuenta}{x: T, a: [T]}{\ent}{long(\comp{y}{y \selec a, y == x})}
+\aux{mismos}{a, b: [T]}{\bool}{|a| == |b| \ \&\& \ (\forall c \in a)cuenta(c,a) == cuenta(c,b)}
 \aux{obtenerGeneros}{ps: [Pelicula]}{[Genero]}{\comp{genero(p)}{p \selec ps}}
 \aux{obtenerGenerosDupla}{x: [(Genero,[Pelicula])]}{[Genero]}{\comp{prm(dupla)}{dupla \selec x}}
 \aux{generosOrd}{gs: [Genero]}{Bool}{(\forall i \selec [0..|gs|, i \neq |gs|)ord(gs_i) \le ord(gs_{i+1})}
