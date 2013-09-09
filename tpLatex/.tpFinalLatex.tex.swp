@@ -192,16 +192,31 @@
 	\asegura[salaDelTicketNoCambia]{sala(t) == sala(pre(t))}
 	\asegura[marcarElTicketComoUsado]{usado(t)}
 	\asegura[sumarUnEspectador]{espectadores(c, s) == espectadores(pre(c), s) + 1}
-	\asegura[sacoElTicketDeSinUsar]{}
-	\asegura[salasNoCambian]{}
-	\asegura[nombreDelCineNoCambia]{}
-	\asegura[peliculasDelCineNoCambia]{}
-	\asegura[pelisNoCambianSala]{}
-	\asegura[espectadoresNoCambianDeOtrasSalas]{}
+	\asegura[sacoElTicketDeSinUsar]{mismos(ticketsVendidosSinUsar(c), \comp{ti}{ti \selec ticketsVendidosSinUsar(pre(c)),\newline ti \neq t})}
+	\asegura[salasNoCambian]{mismos(salas(c), salas (pre (c)))}
+	\asegura[nombreDelCineNoCambia]{nombre(c) == nombre(pre (c))}
+	\asegura[peliculasDelCineNoCambia]{mismos(peliculas (c), peliculas (pre (c)))}
+	\asegura[pelisNoCambianSala]{(\forall  p \selec peliculas (pre (c)))sala (c, p) == sala (pre(c), p)}
+	\asegura[espectadoresNoCambianDeOtrasSalas]{(\forall sa \selec salas (pre (c)), sa \neq s)espectadores (c, sa) == espectadores (pre(c), sa)}
 	
 \end{problema}
 
 \begin{problema}{pasarA3DUnaPelicula}{c: Cine, nombre: String}{Pelicula}{}
+	\requiere[]{}
+	\modifica{c}
+	\asegura[]{}
+	\asegura[]{}
+	\asegura[]{}
+	\asegura[]{}
+	\asegura[]{}
+	\asegura[]{}
+	\asegura[]{}
+	\asegura[]{}
+	\asegura[]{}
+	\asegura[]{}
+	\asegura[]{}
+
+	
 \end{problema}
 
 
@@ -222,5 +237,7 @@
 \aux{pelisEnMismasSalas}{c: Cine, c`: Cine}{\bool}{(\forall p \selec peliculas(c)) sala(c, p)==sala(c`,p)}
 \aux{mismosEspectadores}{c: Cine, c`: Cine}{\bool}{(\forall sala \selec salas(c))espectadores(c,sala)==espectadores(c`,sala)}
 \aux{mismosTickets}{c: Cine, c`: Cine}{\bool}{mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(c`))}
-
+\aux{nombrePelisDeCine}{c: Cine}{[String]}{\comp{nombre(p)}{p\selec peliculas(c)}}
+\aux{nombrePelisDeTicketsDeCine}{c: Cine}{[String]}{\comp{nombre(pelicula(t))}{t\selec ticketsVendidosSinUsar(c)}}
+\aux{películaDeNombre}{c: Cine, n: String}{Pelicula}{\cab\comp{peli}{peli \selec peliculas(c), nombre(peli) == n}}
 \end{document}
