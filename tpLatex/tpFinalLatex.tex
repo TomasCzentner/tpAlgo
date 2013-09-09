@@ -160,7 +160,7 @@
 	\requiere {e \ge 0}
 	\modifica {cs}
 	\asegura [mismaListaDeCines]{long(cs) == long(pre(cs)}
-	\asegura [cinesSeParecen]{(\forall c` \selec pre(cs))(\exists c \selec cs)seParecen(c, c`, e)}
+	\asegura [cinesSeParecen]{(\forall c' \selec pre(cs))(\exists c \selec cs)seParecen(c, c`, e)}
 \end{problema}
 
 
@@ -241,4 +241,8 @@
 \aux{nombrePelisDeCine}{c: Cine}{[String]}{\comp{nombre(p)}{p\selec peliculas(c)}}
 \aux{nombrePelisDeTicketsDeCine}{c: Cine}{[String]}{\comp{nombre(pelicula(t))}{t\selec ticketsVendidosSinUsar(c)}}
 \aux{películaDeNombre}{c: Cine, n: String}{Pelicula}{\cab\comp{peli}{peli \selec peliculas(c), nombre(peli) == n}}
+
+\section {Nota sobre los ejercicios 12, 13 y 14}
+El argumento utilizado al momento de la resolución de estos problemas es que no es posible cerrar salas que esten relacionadas con aquellos tickets vendidos sin usar, ya que el invariante lo prohibe. Se podria haber optado tambien por eliminar los tickets de esas salas, pero fue considerado inapropiado, por lo tanto fue elegida la primera opción: no cerrar aquellas salas que tengan un ticket vendido sin usar asignado a ellas.
+
 \end{document}
