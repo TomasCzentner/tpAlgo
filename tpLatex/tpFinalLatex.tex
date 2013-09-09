@@ -166,7 +166,7 @@
 
 \begin{problema}{pelicula}{c: Cine, s: Sala}{Pelicula}
 	\requiere[salaEnElCine]{s \in salas(c)}
-	\requiere[salaEnElCine]{(\exists p \selec peliculas(c)) sala(c,p) == s}
+	\requiere[todasSalasConPeli]{(\exists p \selec peliculas(c)) sala(c,p) == s}
 	\asegura[peliResultadoEstaEnElCine]{result \in  peliculas(c)}
 	\asegura[aLaPeliResultadoLeCorrespondeSalaEntrada]{sala(c, result) == s}
 \end{problema}
