@@ -70,8 +70,8 @@
 	\requiere[]{ts \neq \lv}
 	\requiere[]{ticketsUsados(ts) \neq \lv}
 	
-	\asegura[peliEstaEnTickets]{result \in peliculasVistas(ticketsUsados(ts))}
-	\asegura[esLaPeliMenosVista]{\neg(\exists p \selec peliculasVistas(ticketsUsados(ts)) ticketsPorPelicula(p, ticketsUsados(ts)) < ticketsPorPelicula(result, ticketsUsados(ts))}
+	\asegura[peliEnTickets]{result \in peliculasVistas(ticketsUsados(ts))}
+	\asegura[esLaPeliMenosVista]{\neg(\exists p \selec peliculasVistas(ticketsUsados(ts))\newline ticketsPorPelicula(p, ticketsUsados(ts)) < ticketsPorPelicula(result, ticketsUsados(ts))}
 \end{problema}
 
 \begin{problema}{todosLosTicketsParaLaMismaSala}{ts:[Ticket]}{\bool}
@@ -81,10 +81,10 @@
 \begin{problema}{cambiarSala}{ts:[Ticket], vieja: Sala, nueva: Sala}{}{}	
 	\modifica{ts}
 	\asegura [mismoNumeroTickets]{|ts| == |pre(ts)|}
-	\asegura [cambioDeSala]{(\forall i \selec [0\twodots|pre(ts)|), sala(pre(ts)_i) == vieja)sala(ts_{i} == nueva}
-	\asegura [mismasPelis]{(\forall i \selec [0\twodots|pre(ts)|)pelicula(ts_{i}) == pelicula(pre(ts)_{i})}
+	\asegura [cambioDeSala]{(\forall i \selec [0\twodots|pre(ts)|), sala(pre(ts)_i) == vieja) sala(ts_{i}) == nueva)}
+	\asegura [mismasPelis]{(\forall i \selec [0\twodots|pre(ts)|))pelicula(ts_{i}) == pelicula(pre(ts)_{i})}
 	\asegura [ticketsSiguenUsados]{(\forall i \selec [0\twodots|pre(ts)|)usado(ts_i) == usado(pre(ts)_i)}
-	\asegura[mismasSalas]{(\forall i \selec [0\twodots|pre(ts)|, sala(pre(ts)_i \neq vieja)sala(ts_i) == sala(pre(ts)_i)}
+	\asegura[mismasSalas]{(\forall i \selec [0\twodots|pre(ts)|), sala(pre(ts)_i \neq vieja)sala(ts_i) == sala(pre(ts)_i)}
 \end{problema}
 
 
@@ -110,35 +110,35 @@
 \end{tipo}
 
 \begin{problema}{cineVacio}{n: String}{Cine}
-		\asegura[nombreCineEntradaEsSalida]{nombre(res) == n}
-		\asegura[salasCineVacias]{salas(res) == \lv}
+		\asegura[mismoNombre]{nombre(res) == n}
+		\asegura[salasVacias]{salas(res) == \lv}
 \end{problema}
 
 \begin{problema}{agregarPelicula}{c: Cine, p: Pelicula, s: Sala}{}{}
-	\requiere[salaEntradaEnCine]{s \in salas(c)}
+	\requiere[esSala]{s \in salas(c)}
 	\requiere[nuevaSalaVacia]{\neg((\exists pe \selec pelicula(c))sala(c, pe) == s)}
 	\requiere[nuevaPelicula]{p \notin peliculas(c)}
 	\modifica{c}
-	\asegura[peliculasSeMantienen]{mismos(peliculas(pre(c)\masmas \ [p], peliculas(c))}
-	\asegura[salasSeMantienen]{mismos(salas(c), salas(pre(c))}
-	\asegura[nuevaPeliEnCorrectaSala]{sala(c,p)==s}
-	\asegura[nombresSeMantienen]{nombre(c) == nombre(pre(c))}
-	\asegura[salaParaTodasPeliculasSeMantiene]{(\forall p \selec peliculas(pre(c)))sala(c,p) == sala(pre(c), p)}
-	\asegura[espectadoresSeMantienen]{(\forall s \selec salas(c))espectadores(c,p) == espectadores(pre(c), p)}
-	\asegura[noSeVendieronMasTickets]{mismos(ticketsVendidosSinUSar(c) == ticketsVendidosSinUSar(pre(c)))}
+	\asegura[mismosNombres]{nombre(c) == nombre(pre(c))}
+	\asegura[mismasPelis]{mismos(peliculas(pre(c)\masmas \ [p], peliculas(c))}
+	\asegura[mismasSalas]{mismos(salas(c), salas(pre(c))}
+	\asegura[peliEnSala]{sala(c,p)==s}
+	\asegura[pelisEnMismasSalas]{(\forall p \selec peliculas(pre(c)))sala(c,p) == sala(pre(c), p)}
+	\asegura[mismosEspectadores]{(\forall s \selec salas(c))espectadores(c,p) == espectadores(pre(c), p)}
+	\asegura[mismosTickets]{mismos(ticketsVendidosSinUSar(c) == ticketsVendidosSinUSar(pre(c)))}
 \end{problema}
 
 
 \begin{problema}{cerrarSala}{c: Cine, s: Sala}{}{}
-	\requiere[salaEsteEnElCine]{ s \in salas(c)}
-	\requiere[noSeCierreSalaConTicketsVendidos]{(\forall t \selec ticketsVendidosSinUSar(c)) sala(t) \neq s}
+	\requiere[esSala]{ s \in salas(c)}
+	\requiere[salaSinTickets]{(\forall t \selec ticketsVendidosSinUSar(c)) sala(t) \neq s}
 	\modifica{c}
-	\asegura[salasNuevas]{mismos(salas(c),\comp{sal}{sal \selec salas(pre(c)), sal \neq s})}
-	\asegura[nombreSeMantiene]{nombre(c) == nombre(pre(c))}
-	\asegura[peliculasSinLasDeSalasCerradas]{mismos(peliculas(c), \comp{peli}{peli \selec peliculas(pre(c)), peli \neq peliDeSala(s,c)})}
-	\asegura[salaParaTodasPeliculasSeMantiene]{(\forall p \selec peliculas(pre(c)))sala(c,p) == sala(pre(c), p)}
-	\asegura[espectadoresSeMantienen]{(\forall s \selec salas(c))espectadores(c,p) == espectadores(pre(c), p)}
-	\asegura[noSeVendieronMasTickets]{mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(pre(c)))}
+	\asegura[mismoNombre]{nombre(c) == nombre(pre(c))}
+	\asegura[mismasSalas]{mismos(salas(c),\comp{sal}{sal \selec salas(pre(c)), sal \neq s})}
+	\asegura[mismasPelis]{mismos(peliculas(c), \comp{peli}{peli \selec peliculas(pre(c)), peli \neq peliDeSala(s,c)})}
+	\asegura[pelisEnMismasSalas]{(\forall p \selec peliculas(pre(c)))sala(c,p) == sala(pre(c), p)}
+	\asegura[mismosEspectadores]{(\forall s \selec salas(c))espectadores(c,p) == espectadores(pre(c), p)}
+	\asegura[mismosTickets]{mismos(ticketsVendidosSinUsar(c), ticketsVendidosSinUsar(pre(c)))}
 \end{problema}
 
 \begin{problema}{cerrarSalas}{c: Cine, e: \ent}{}{
@@ -152,62 +152,61 @@
 \begin{problema}{cerrarSalasDeLaCadena}{cs: [Cine], e: \ent}{}{}
 	\requiere {e \ge 0}
 	\modifica {cs}
-	\asegura [mismaListaDeCines]{long(cs) == long(pre(cs)}
+	\asegura [mismosCines]{long(cs) == long(pre(cs)}
 	\asegura [cinesSeParecen]{(\forall c' \selec pre(cs))(\exists c \selec cs)seParecen(c, c`, e)}
 \end{problema}
 
 
 \begin{problema}{pelicula}{c: Cine, s: Sala}{Pelicula}
-	\requiere[salaEnElCine]{s \in salas(c)}
-	\requiere[todasSalasConPeli]{(\exists p \selec peliculas(c)) sala(c,p) == s}
-	\asegura[peliResultadoEstaEnElCine]{result \in  peliculas(c)}
-	\asegura[aLaPeliResultadoLeCorrespondeSalaEntrada]{sala(c, result) == s}
+	\requiere[esSala]{s \in salas(c)}
+	\requiere[tienePeli]{(\exists p \selec peliculas(c)) sala(c,p) == s}
+	\asegura[esPeli]{result \in  peliculas(c)}
+	\asegura[peliEnSala]{sala(c, result) == s}
 \end{problema}
 
 \begin{problema}{venderTicket}{c: Cine, p: Pelicula}{Ticket}
-	\requiere[peliculaEnElCine]{p \in peliculas(c)}
+	\requiere[esPelicula]{p \in peliculas(c)}
 	\modifica{c}
-	\asegura[sumoTicketANoUsados]{mismos(ticketsVendidosSinUsar(pre(c)\masmas \ [result], ticketsVendidosSinUsar(pre(c))}
-	\asegura[noCambiaNombreDelCine]{nombe(c) == nombre(pre(c))}
-	\asegura[salasDelCineNoCambian]{mismos(salas(pre(c)), salas(c))}
-	\asegura[peliculasDelCineNoCambian]{mismos(peliculas(pre(c)), peliculas(c))}
-	\asegura[salasDeLasPelisNoCambian]{(\forall pe \selec peliculas(pre(c))sala(pre(c), pe) == sala(c, pe)}
-	\asegura[espectadoresDeLasSalasNoCambian]{(\forall sa \selec salas(pre(c))espectadores(pre(c), pe) == espectadores(c, pe)}
+	\asegura[mismoNombre]{nombe(c) == nombre(pre(c))}
+	\asegura[mismasSalas]{mismos(salas(pre(c)), salas(c))}
+	\asegura[mismasPelis]{mismos(peliculas(pre(c)), peliculas(c))}
+	\asegura[pelisEnMismasSalas]{(\forall pe \selec peliculas(pre(c))sala(pre(c), pe) == sala(c, pe)}
+	\asegura[mismosEspectadores]{(\forall sa \selec salas(pre(c))espectadores(pre(c), pe) == espectadores(c, pe)}
+	\asegura[mismosTickets]{mismos(ticketsVendidosSinUsar(pre(c)\masmas \ [result], ticketsVendidosSinUsar(pre(c))}
 \end{problema}
 
 \begin{problema}{ingresarASala}{c: Cine, s: Sala, t: Ticket}{}
-	\requiere[salaEntradaEnCine]{s \in salas(c)}
-	\requiere[salaTicketIgualEntrada]{salta(t) == s}
-	\requiere[ticketEstaEntreLosNoUsados]{t \in ticketsVendidosSinUsar(c)}
+	\requiere[esSala]{s \in salas(c)}
+	\requiere[salaTicketEsSala]{sala(t) == s}
+	\requiere[ticketSinUsar]{t \in ticketsVendidosSinUsar(c)}
 	\modifica{c}
 	\modifica{t}
-	\asegura[peliculaDelTicketNoCambia]{pelicula(t) == pelicula(pre(t))}
-	\asegura[salaDelTicketNoCambia]{sala(t) == sala(pre(t))}
-	\asegura[marcarElTicketComoUsado]{usado(t)}
-	\asegura[sumarUnEspectador]{espectadores(c, s) == espectadores(pre(c), s) + 1}
-	\asegura[sacoElTicketDeSinUsar]{mismos(ticketsVendidosSinUsar(c), \comp{ti}{ti \selec ticketsVendidosSinUsar(pre(c)),\newline ti \neq t})}
-	\asegura[salasNoCambian]{mismos(salas(c), salas (pre (c)))}
-	\asegura[nombreDelCineNoCambia]{nombre(c) == nombre(pre (c))}
-	\asegura[peliculasDelCineNoCambia]{mismos(peliculas (c), peliculas (pre (c)))}
-	\asegura[pelisNoCambianSala]{(\forall  p \selec peliculas (pre (c)))sala (c, p) == sala (pre(c), p)}
-	\asegura[espectadoresNoCambianDeOtrasSalas]{(\forall sa \selec salas (pre (c)), sa \neq s)espectadores (c, sa) == espectadores (pre(c), sa)}
-	
+	\asegura[mismaPeli]{pelicula(t) == pelicula(pre(t))}
+	\asegura[mismaSala]{sala(t) == sala(pre(t))}
+	\asegura[ticketUsado]{usado(t)}
+	\asegura[ingresaEspectador]{espectadores(c, s) == espectadores(pre(c), s) + 1}
+	\asegura[mismasSalas]{mismos(salas(c), salas (pre (c)))}
+	\asegura[mismoNombre]{nombre(c) == nombre(pre (c))}
+	\asegura[mismasPelis]{mismos(peliculas (c), peliculas (pre (c)))}
+	\asegura[pelisEnMismasSalas]{(\forall  p \selec peliculas (pre (c)))sala (c, p) == sala (pre(c), p)}
+	\asegura[mismosEspectadores]{(\forall sa \selec salas (pre (c)), sa \neq s)espectadores (c, sa) == espectadores (pre(c), sa)}
+	\asegura[mismosTickets]{mismos(ticketsVendidosSinUsar(c), \comp{ti}{ti \selec ticketsVendidosSinUsar(pre(c)),\newline ti \neq t})}
 \end{problema}
 
 \begin{problema}{pasarA3DUnaPelicula}{c: Cine, nombre: String}{Pelicula}{}
 	\requiere[laPeliculaExiste]{(\exists p \selec peliculas(c))nombre(p) == nombre}
 	\modifica{c}
-	\asegura[nombreResultadoIgualEntrada]{nombre(result) == nombre}
+	\asegura[mismoNombrePeli]{nombre(result) == nombre}
 	\asegura[peli3D]{es3D(result)}
-	\asegura[generoResultadoIgualEntrada]{generos(result) == generos(peliculaDeNombre(pre(c), nombre))}
-	\asegura[actoresResultadoIgualEntrada]{actores(result) == actores(peliculaDeNombre(pre(c), nombre))}
-	\asegura[salaResultadoIgualEntrada]{sala(c, result) == sala (c, (peliculaDeNombre(pre(c), nombre)))}
-	\asegura[nombreNoCambia]{nombre(c) == nombre(pre(c))}
-	\asegura[salasNoCambian]{salas(c) == salas(pre(c))}
-	\asegura[lasPelisNoCambian]{mismos(nombrePelisDeCine(c),nombrePelisDeCine(pre(c)))}
-	\asegura[lasSalasPorPeliculaNoCambian]{(\forall p \selec peliculas(c), nombre(p)\neq nombre) sala(c, p) == sala(pre(c), p)}
-	\asegura[losEspectadoresNoCambian]{(\forall s \selec salas(c)) espectadores(c, s) == espectadores(pre(c), s)}
-	\asegura[losTicketsNoCambian]{mismos(nombrePelisDeTicketsDeCine(c), nombrePelisDeTicketsDeCine(pre(c)))}
+	\asegura[mismosGeneros]{generos(result) == generos(peliculaDeNombre(pre(c), nombre))}
+	\asegura[mismosActores]{actores(result) == actores(peliculaDeNombre(pre(c), nombre))}
+	\asegura[mismaSala]{sala(c, result) == sala (c, (peliculaDeNombre(pre(c), nombre)))}
+	\asegura[mismoNombre]{nombre(c) == nombre(pre(c))}
+	\asegura[mismasSalas]{salas(c) == salas(pre(c))}
+	\asegura[mismasPelis]{mismos(nombrePelisDeCine(c),nombrePelisDeCine(pre(c)))}
+	\asegura[pelisEnMismasSalas]{(\forall p \selec peliculas(c), nombre(p)\neq nombre) sala(c, p) == sala(pre(c), p)}
+	\asegura[mismosEspectadores]{(\forall s \selec salas(c)) espectadores(c, s) == espectadores(pre(c), s)}
+	\asegura[mismosTickets]{mismos(nombrePelisDeTicketsDeCine(c), nombrePelisDeTicketsDeCine(pre(c)))}
 
 	
 \end{problema}
@@ -233,8 +232,8 @@
 ((sala \neq sala(t)) \&\& (espectadores(sala) \geq e) )]}
 \aux{salasConMasDe}{c: Cine, e: \ent}{[Sala]}{[sala | sala \selec salas(c), espectadores(c, sala) \geq e]}
 \aux{pelisDeSalas}{c: Cine, sal: [Sala]}{[Peliculas]}{[peliDeSala(c, s) | s \selec sal]}
-\aux{seParecen}{c: Cine, c`: Cine, e: \ent}{\bool}{\newline nombresIguales(c,c`) \&\&  \newline mismasSalas(c,c`,e) \&\& \newline mismasPeliculas(c,c`) \&\&  \newline pelisEnMismasSalas(c,c`) \&\& \newline mismosEspectadores(c,c`) \&\& \newline mismosTickets(c,c`)}
-\aux{nombresIguales}{c: Cine, c`: Cine}{\bool}{nombre(c) == nombre(c`)}
+\aux{mismoNombre}{c: Cine, c`: Cine}{\bool}{nombre(c) == nombre(c`)}
+\aux{seParecen}{c: Cine, c`: Cine, e: \ent}{\bool}{\newline mismoNombre(c,c`) \&\&  \newline mismasSalas(c,c`,e) \&\& \newline mismasPeliculas(c,c`) \&\&  \newline pelisEnMismasSalas(c,c`) \&\& \newline mismosEspectadores(c,c`) \&\& \newline mismosTickets(c,c`)}
 \aux{mismasSalas}{c: Cine, c`: Cine, e: \ent}{\bool}{mismos(salas(c), salasSinTicketsVendidosConMasDe(c`, e))}
 \aux{mismasPeliculas}{c: Cine, c`: Cine, e: \ent}{\bool}{mismas(peliculas(c), pelisDeSalas(c`,salasConMasDe(c`, e))}
 \aux{pelisEnMismasSalas}{c: Cine, c`: Cine}{\bool}{(\forall p \selec peliculas(c)) sala(c, p)==sala(c`,p)}
